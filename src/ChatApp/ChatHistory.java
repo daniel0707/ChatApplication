@@ -17,13 +17,14 @@ public class ChatHistory implements ChatAnnouncer{
 
     public void insert(ChatMessage message){
         messageList.addLast(message);
+        announce(message);
     }
 
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         for(ChatMessage msg:messageList){
-            str.append(msg.toString()+"/n");
+            str.append(msg.toString()+System.getProperty("line.separator"));
         }
         return str.toString();
     }

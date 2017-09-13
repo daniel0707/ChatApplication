@@ -6,18 +6,14 @@ import java.util.Scanner;
 //WTF TO USE AS INPUT AND OUTPUT READERS?!
 //
 public class CommandInterpreter implements ChatObserver,Runnable{
-    private InputStream input;
-    private OutputStream output;
     private boolean quit = false;
     Scanner scanner;
     PrintStream writer;
     User user = null;
 
     public CommandInterpreter(InputStream in, OutputStream out){
-        this.input = in;
-        this.output = out;
         this.scanner = new Scanner(in);
-        this.writer = new PrintStream(out);
+        this.writer = new PrintStream(out, true);
     }
 
     public void run(){
@@ -28,12 +24,25 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     }
 
     private void decide_input_type(String str){
+        String cmd;
+        String arg;
         if(!str.isEmpty()) {
             switch (str.charAt(0)) {
                 case ':':
-                    String[] split = str.split("\\s+");
-                    String cmd = split[0], arg = split[1];
-                    run_command(cmd, arg);
+                    String[] split = str.substring(1).split("\\s+");
+                    if(split.length>0){
+                        cmd = split[0];
+                    }else{
+                        cmd = null;
+                    }
+                    if(split.length>1){
+                        arg = split[1];
+                    }else{
+                        arg = null;
+                    }
+                    if(cmd!=null) {
+                        run_command(cmd, arg);
+                    }
                     break;
                 default:
                     send_message(str);
@@ -47,9 +56,15 @@ public class CommandInterpreter implements ChatObserver,Runnable{
             case "user":
                 //assigns a username or says its already used
                 if(!UserNameList.get_instance().check_contains(new User(arg))){
-                    user = new User(arg);
-                    UserNameList.get_instance().insert_user_name(user);
-                    writer.println("User "+arg+" has been registered");
+                    if(arg.isEmpty() || arg == null ){
+                        writer.println("Username cannot be empty");
+                    }else {
+                        user = new User(arg);
+                        UserNameList.get_instance().insert_user_name(user);
+                        writer.println("User " + arg + " has been registered");
+                        //register to observe chat
+                        ChatHistory.get_instance().register_observer(this);
+                    }
                 }else{
                     writer.println("User already exists");
                 }

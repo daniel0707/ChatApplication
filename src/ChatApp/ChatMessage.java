@@ -1,6 +1,7 @@
 package ChatApp;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class ChatMessage {
     private String msg;
@@ -15,6 +16,6 @@ public class ChatMessage {
 
     @Override
     public String toString(){
-        return this.msg + " from "+this.usr.get_username() + " at "+ this.timestamp.toString();
+        return (new SimpleDateFormat("HH:mm:ss").format(this.timestamp))+ String.format("|%-20s|",this.usr.get_username())+this.msg;
     }
 }
