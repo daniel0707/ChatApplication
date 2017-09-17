@@ -14,6 +14,8 @@ public class ChatMessage {
         this.timestamp = new Timestamp(new java.util.Date().getTime());
     }
 
+    public Timestamp get_timestamp(){return this.timestamp;}
+
     @Override
     public String toString(){
         return (new SimpleDateFormat("HH:mm:ss").format(this.timestamp))+ String.format("|%-20s|",this.usr.get_username())+this.msg;

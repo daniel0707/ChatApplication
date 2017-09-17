@@ -17,6 +17,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     }
 
     public void run(){
+        writer.println("Welcome to my humble chat server");
         while(!quit){
             String input = scanner.hasNext()? scanner.nextLine() : "";
             decide_input_type(input);
@@ -24,8 +25,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     }
 
     private void decide_input_type(String str){
-        String cmd;
-        String arg;
+        String cmd, arg;
         if(!str.isEmpty()) {
             switch (str.charAt(0)) {
                 case ':':
@@ -54,19 +54,23 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     private void run_command(String cmd, String arg){
         switch (cmd){
             case "user":
-                //assigns a username or says its already used
-                if(!UserNameList.get_instance().check_contains(new User(arg))){
-                    if(arg.isEmpty() || arg == null ){
+                if(user==null) {
+                    //assigns a username or says its already used
+                    if (arg == null) {
+                        writer.println("Please enter username");
+                    } else if (arg.isEmpty()) {
                         writer.println("Username cannot be empty");
-                    }else {
+                    } else if (!UserNameList.get_instance().check_contains(new User(arg))) {
                         user = new User(arg);
                         UserNameList.get_instance().insert_user_name(user);
                         writer.println("User " + arg + " has been registered");
                         //register to observe chat
                         ChatHistory.get_instance().register_observer(this);
+                    } else {
+                        writer.println("User already exists");
                     }
-                }else{
-                    writer.println("User already exists");
+                }else {
+                    writer.println("Your username is "+user.get_username());
                 }
                 break;
             case "userlist":
@@ -77,7 +81,10 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 break;
             case "messages":
                 //print all messages in format given in toString method
-                writer.println(ChatHistory.get_instance().toString());
+                //deprecated due to need for recognising who asks for history and giving exactly what he had access to
+                //writer.println(ChatHistory.get_instance().toString());
+
+                writer.println(ChatHistory.get_instance().print_history(user));
                 break;
             case "quit":
                 //shut this thing dooooooooooooown
