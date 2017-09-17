@@ -33,7 +33,8 @@ public class ChatHistory implements ChatAnnouncer{
     public String print_history(User usr){
         StringBuilder str = new StringBuilder();
         for(ChatMessage msg:messageList){
-            if(msg.get_timestamp().after(usr.get_login_timestamp())) {
+            if(msg.get_timestamp().after(usr.get_login_timestamp()) && msg.get_channel().equals(usr.get_currentChannel())) {
+                System.out.println("is channel equal: "+msg.get_channel().equals(usr.get_currentChannel()));
                 str.append(msg.toString() + System.getProperty("line.separator"));
             }
         }

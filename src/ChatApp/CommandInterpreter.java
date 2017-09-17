@@ -1,10 +1,9 @@
 package ChatApp;
 
 import java.io.*;
+import java.nio.channels.Channel;
 import java.util.Scanner;
-//      TO DO
-//WTF TO USE AS INPUT AND OUTPUT READERS?!
-//
+
 public class CommandInterpreter implements ChatObserver,Runnable{
     private boolean quit = false;
     Scanner scanner;
@@ -61,7 +60,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                     } else if (arg.isEmpty()) {
                         writer.println("Username cannot be empty");
                     } else if (!UserNameList.get_instance().check_contains(new User(arg))) {
-                        user = new User(arg);
+                        user = new User(arg);;
                         UserNameList.get_instance().insert_user_name(user);
                         writer.println("User " + arg + " has been registered");
                         //register to observe chat
@@ -86,6 +85,23 @@ public class CommandInterpreter implements ChatObserver,Runnable{
 
                 writer.println(ChatHistory.get_instance().print_history(user));
                 break;
+            case "channel":
+                if (arg == null) {
+                    writer.println("Please enter channel name");
+                }else if(arg.isEmpty()) {
+                    writer.println("Channel name cannot be empty");
+                }else if(ChannelList.get_instance().check_contains(arg)){
+                    user.assign_channel(ChannelList.get_instance().get_channel(arg));
+                    user.set_new_login_timestamp();
+                }else{
+                    writer.println("Channel "+arg+" doesn't exist, do you want to create it?");
+                    if(scanner.nextLine().equals("yes") || equals("y")){
+                        ChannelList.get_instance().put_channel(new ChatApp.Channel(arg));
+                        user.assign_channel(ChannelList.get_instance().get_channel(arg));
+                        writer.println("Channel "+arg+" created");
+                    }
+                }
+                break;
             case "quit":
                 //shut this thing dooooooooooooown
                 break;
@@ -104,6 +120,6 @@ public class CommandInterpreter implements ChatObserver,Runnable{
 
     @Override
     public void update(ChatMessage msg) {
-        writer.println(msg.toString());
+        if(msg.get_channel().equals(user.get_currentChannel())){writer.println(msg.toString());}
     }
 }
