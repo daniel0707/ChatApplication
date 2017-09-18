@@ -5,6 +5,7 @@ public class Channel {
 
     public Channel(String str){
         this.channelName=str;
+        ChatHistory.get_instance().add_channel_to_history(str);
     }
 
     public String get_name(){

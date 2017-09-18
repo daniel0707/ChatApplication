@@ -1,14 +1,13 @@
 package ChatApp;
 
 import java.io.*;
-import java.nio.channels.Channel;
 import java.util.Scanner;
 
 public class CommandInterpreter implements ChatObserver,Runnable{
     private boolean quit = false;
-    Scanner scanner;
-    PrintStream writer;
-    User user = null;
+    private Scanner scanner;
+    private PrintStream writer;
+    private User user = null;
 
     public CommandInterpreter(InputStream in, OutputStream out){
         this.scanner = new Scanner(in);
@@ -60,11 +59,11 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                     } else if (arg.isEmpty()) {
                         writer.println("Username cannot be empty");
                     } else if (!UserNameList.get_instance().check_contains(new User(arg))) {
-                        user = new User(arg);;
+                        user = new User(arg);
                         UserNameList.get_instance().insert_user_name(user);
                         writer.println("User " + arg + " has been registered");
                         //register to observe chat
-                        ChatHistory.get_instance().register_observer(this);
+                        ChatHistory.get_instance().register_observer(this,user);
                     } else {
                         writer.println("User already exists");
                     }
@@ -73,9 +72,16 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 }
                 break;
             case "userlist":
-                //prints all users
-                for(User usr:UserNameList.get_instance().print_users()){
+                //prints users in this channel
+                if(arg.equals("all")) {
+                    for (User usr : UserNameList.get_instance().print_users()) {
+                        writer.println(usr.get_username());
+                    }
+                }else {
+                 //prints all users
+                for (User usr : UserNameList.get_instance().print_users(user.get_currentChannel())) {
                     writer.println(usr.get_username());
+                    }
                 }
                 break;
             case "messages":
@@ -95,15 +101,19 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                     user.set_new_login_timestamp();
                 }else{
                     writer.println("Channel "+arg+" doesn't exist, do you want to create it?");
-                    if(scanner.nextLine().equals("yes") || equals("y")){
-                        ChannelList.get_instance().put_channel(new ChatApp.Channel(arg));
+                    if(scanner.hasNext("yes|y")){
+                        System.out.println("we reached line 0");
+                        ChatHistory.get_instance().remove_observer(this,user);
+                        ChannelList.get_instance().add_channel(arg);
                         user.assign_channel(ChannelList.get_instance().get_channel(arg));
+                        ChatHistory.get_instance().register_observer(this,user);
                         writer.println("Channel "+arg+" created");
                     }
                 }
                 break;
             case "quit":
                 //shut this thing dooooooooooooown
+                //but how?
                 break;
         }
     }

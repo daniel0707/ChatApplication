@@ -30,4 +30,14 @@ public class UserNameList {
         return answer;
     }
 
+    public ArrayList<User> print_users(Channel channel){
+        ArrayList<User> answer = new ArrayList<>();
+        for(User usr: userNameSet){
+            if(usr.get_currentChannel()==channel){
+                answer.add(usr);
+            }
+        }
+        return answer;
+    }
+
 }

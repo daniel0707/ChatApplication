@@ -21,7 +21,8 @@ public class ChannelList {
             return channelMap.get(str);
     }
 
-    public void put_channel(Channel chn){
-        channelMap.put(chn.get_name(),chn);
+    public void add_channel(String str){
+        channelMap.put(str,new Channel(str));
+        System.out.println("Channel "+str+" created");
     }
 }
