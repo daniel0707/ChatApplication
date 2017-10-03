@@ -15,7 +15,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     }
 
     public void run(){
-        writer.println("Welcome to my humble chat server");
+        writer.println(new SystemMessage("Welcome to my humble chat server"));
         while(!quit){
             String input = scanner.hasNext()? scanner.nextLine() : "";
             decide_input_type(input);
@@ -55,33 +55,39 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 if(user==null) {
                     //assigns a username or says its already used
                     if (arg == null) {
-                        writer.println("Please enter username");
+                        writer.println(new SystemMessage("Please enter username").toString());
                     } else if (arg.isEmpty()) {
-                        writer.println("Username cannot be empty");
+                        writer.println(new SystemMessage("Username cannot be empty").toString());
                     } else if (!UserNameList.get_instance().check_contains(new User(arg))) {
                         user = new User(arg);
                         UserNameList.get_instance().insert_user_name(user);
-                        writer.println("User " + arg + " has been registered");
+                        writer.println(new SystemMessage("User " + arg + " has been registered").toString());
                         //register to observe chat
-                        ChatHistory.get_instance().register_observer(this,user);
+                        ChatHistory.get_instance().register_observer(this,user.get_currentChannel());
                     } else {
-                        writer.println("User already exists");
+                        writer.println(new SystemMessage("User already exists").toString());
                     }
                 }else {
-                    writer.println("Your username is "+user.get_username());
+                    writer.println(new SystemMessage("Your username is "+user.get_username()).toString());
                 }
                 break;
             case "userlist":
                 //prints users in this channel
+                if(arg!=null && !arg.isEmpty()){
                 if(arg.equals("all")) {
+                    StringBuilder temp = new StringBuilder();
                     for (User usr : UserNameList.get_instance().print_users()) {
-                        writer.println(usr.get_username());
+                        temp.append(usr.get_username() + "\n");
                     }
+                    writer.println(new SystemMessage(temp.toString()).toString());
+                }
                 }else {
                  //prints all users
-                for (User usr : UserNameList.get_instance().print_users(user.get_currentChannel())) {
-                    writer.println(usr.get_username());
-                    }
+                    StringBuilder temp = new StringBuilder();
+                    for (User usr : UserNameList.get_instance().print_users(user.get_currentChannel())) {
+                        temp.append(usr.get_username()+"\n");
+                        }
+                        writer.println(new SystemMessage(temp.toString()).toString());
                 }
                 break;
             case "messages":
@@ -89,31 +95,32 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 //deprecated due to need for recognising who asks for history and giving exactly what he had access to
                 //writer.println(ChatHistory.get_instance().toString());
 
-                writer.println(ChatHistory.get_instance().print_history(user));
+                writer.println(new SystemMessage(ChatHistory.get_instance().print_history(user)));
                 break;
             case "channel":
                 if (arg == null) {
-                    writer.println("Please enter channel name");
+                    writer.println(new SystemMessage("Please enter channel name").toString());
                 }else if(arg.isEmpty()) {
-                    writer.println("Channel name cannot be empty");
+                    writer.println(new SystemMessage("Channel name cannot be empty").toString());
                 }else if(ChannelList.get_instance().check_contains(arg)){
                     user.assign_channel(ChannelList.get_instance().get_channel(arg));
                     user.set_new_login_timestamp();
                 }else{
-                    writer.println("Channel "+arg+" doesn't exist, do you want to create it?");
-                    if(scanner.hasNext("yes|y")){
-                        System.out.println("we reached line 0");
-                        ChatHistory.get_instance().remove_observer(this,user);
+                    writer.println(new SystemMessage("Channel "+arg+" doesn't exist, do you want to create it?").toString());
+                    if(scanner.hasNext(":yes|:y")){
+                        ChatHistory.get_instance().remove_observer(this,user.get_currentChannel());
                         ChannelList.get_instance().add_channel(arg);
+                        ChatHistory.get_instance().add_channel_to_history(ChannelList.get_instance().get_channel(arg));
                         user.assign_channel(ChannelList.get_instance().get_channel(arg));
-                        ChatHistory.get_instance().register_observer(this,user);
-                        writer.println("Channel "+arg+" created");
+                        ChatHistory.get_instance().register_observer(this,user.get_currentChannel());
+                        writer.println(new SystemMessage("Channel "+arg+" created").toString());
                     }
                 }
                 break;
             case "quit":
-                //shut this thing dooooooooooooown
-                //but how?
+                quit = true;
+                scanner.close();
+                writer.close();
                 break;
         }
     }
