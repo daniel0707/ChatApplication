@@ -39,13 +39,7 @@ public class User{
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (!(obj instanceof User)) {
-            return false;
-        }else if (obj == this) {
-            return true;
-        }else {
-            return this.username.equals(((User) obj).username);
-        }
+    public boolean equals(Object obj) {
+        return obj instanceof User && (obj == this || this.username.equals(((User) obj).username));
     }
 }

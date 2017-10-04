@@ -24,9 +24,7 @@ public class UserNameList {
 
     public ArrayList<User> print_users(){
         ArrayList<User> answer = new ArrayList<>();
-        for(User usr: userNameSet){
-            answer.add(usr);
-        }
+        answer.addAll(userNameSet);
         return answer;
     }
 

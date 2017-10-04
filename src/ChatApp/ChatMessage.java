@@ -24,6 +24,6 @@ public class ChatMessage {
 
     @Override
     public String toString(){
-        return (new SimpleDateFormat("HH:mm:ss").format(this.timestamp))+ String.format("|%-20s|",this.usr.get_username())+this.msg;
+        return (new SimpleDateFormat("HH:mm:ss").format(this.timestamp))+" "+this.usr.get_username()+" "+this.msg;
     }
 }

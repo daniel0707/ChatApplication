@@ -1,7 +1,7 @@
 package ChatApp;
 
 public interface ChatAnnouncer {
-    void register_observer(ChatObserver observer, User user);
-    void remove_observer(ChatObserver observer, User user);
+    void register_observer(ChatObserver observer, Channel chn);
+    void remove_observer(ChatObserver observer, Channel chn);
     void announce (ChatMessage msg);
 }

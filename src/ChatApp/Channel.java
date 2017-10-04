@@ -5,7 +5,6 @@ public class Channel {
 
     public Channel(String str){
         this.channelName=str;
-        ChatHistory.get_instance().add_channel_to_history(str);
     }
 
     public String get_name(){
@@ -13,13 +12,11 @@ public class Channel {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (!(obj instanceof Channel)) {
-            return false;
-        }else if (obj == this) {
-            return true;
-        }else {
-            return this.channelName.equals(((Channel) obj).channelName);
-        }
+    public int hashCode(){
+        return this.channelName.hashCode();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Channel && (obj == this || this.channelName.equals(((Channel) obj).channelName));
     }
 }
