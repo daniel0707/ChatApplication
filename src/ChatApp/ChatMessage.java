@@ -3,6 +3,9 @@ package ChatApp;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+/**
+ * Template for user messages
+ */
 public class ChatMessage {
     private String msg;
     private User usr;
@@ -16,9 +19,9 @@ public class ChatMessage {
         this.timestamp = new Timestamp(new java.util.Date().getTime());
     }
 
-    public Timestamp get_timestamp(){return this.timestamp;}
+    Timestamp get_timestamp(){return this.timestamp;}
 
-    public Channel get_channel() {
+    Channel get_channel() {
         return channel;
     }
 

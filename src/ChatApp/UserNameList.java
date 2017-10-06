@@ -3,32 +3,36 @@ package ChatApp;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class UserNameList {
+/**
+ * contains all users, has methods for checking, inserting and removing
+ */
+class UserNameList {
     private HashSet<User> userNameSet = new HashSet<>();
     private static UserNameList myInstance = new UserNameList();
 
     private UserNameList(){
+        userNameSet.add(new User("System"));
     }
 
-    public static UserNameList get_instance(){
+    static UserNameList get_instance(){
         return myInstance;
     }
 
-    public void insert_user_name(User usr){
+    void insert_user_name(User usr){
         userNameSet.add(usr);
     }
 
-    public boolean check_contains(User usr){
+    boolean check_contains(User usr){
         return userNameSet.contains(usr);
     }
 
-    public ArrayList<User> print_users(){
+    ArrayList<User> print_users(){
         ArrayList<User> answer = new ArrayList<>();
         answer.addAll(userNameSet);
         return answer;
     }
 
-    public ArrayList<User> print_users(Channel channel){
+    ArrayList<User> print_users(Channel channel){
         ArrayList<User> answer = new ArrayList<>();
         for(User usr: userNameSet){
             if(usr.get_currentChannel()==channel){
@@ -36,6 +40,10 @@ public class UserNameList {
             }
         }
         return answer;
+    }
+
+    HashSet<User> getUserNameSet() {
+        return this.userNameSet;
     }
 
 }

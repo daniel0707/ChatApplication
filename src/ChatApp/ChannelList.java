@@ -2,7 +2,10 @@ package ChatApp;
 
 import java.util.HashMap;
 
-public class ChannelList {
+/**
+ *  List of channels, methods for inserting and printing
+ */
+class ChannelList {
     private static ChannelList ourInstance = new ChannelList();
     private HashMap<String,Channel> channelMap = new HashMap<>();
     
@@ -11,18 +14,36 @@ public class ChannelList {
         channelMap.put("Default",defaultChannel);
     }
     
-    public static ChannelList get_instance(){return ourInstance;}
+    static ChannelList get_instance(){return ourInstance;}
     
-    public boolean check_contains(String str){
+    boolean check_contains(String str){
         return channelMap.containsKey(str);
     }
     
-    public Channel get_channel(String str){
+    Channel get_channel(String str){
             return channelMap.get(str);
     }
 
-    public void add_channel(String str){
+    void add_channel(String str){
         channelMap.put(str,new Channel(str));
         System.out.println("Channel "+str+" created");
+    }
+    String printChannelList(){
+        HashMap<String,Integer> myMap = new HashMap<>();
+        for (User usr: UserNameList.get_instance().getUserNameSet()) {
+            if(myMap.containsKey(usr.get_currentChannel().get_name())){
+                myMap.put(usr.get_currentChannel().get_name(),myMap.get(usr.get_currentChannel().get_name())+1);
+            }else{
+                myMap.put(usr.get_currentChannel().get_name(),1);
+            }
+        }
+        StringBuilder temp = new StringBuilder();
+        temp.append("Available channels:");
+        for (String chn: channelMap.keySet()) {
+            temp.append(" ").append(chn).append(" (").append(myMap.get(chn)).append("),\n");
+        }
+        String tmp = temp.toString();
+        tmp=tmp.substring(0,tmp.length()-1);
+        return tmp;
     }
 }

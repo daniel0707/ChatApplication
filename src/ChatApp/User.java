@@ -2,34 +2,37 @@ package ChatApp;
 
 import java.sql.Timestamp;
 
+/**
+ * template for user objects, has getters, setters and a comparator
+ */
 public class User{
     private String username;
     private Timestamp loginTimestamp;
     private Channel currentChannel;
 
-    public User(String str){
+    User(String str){
         this.username = str;
         this.loginTimestamp = new Timestamp(new java.util.Date().getTime());
         this.currentChannel = ChannelList.get_instance().get_channel("Default");
     }
 
-    public String get_username() {
+    String get_username() {
         return username;
     }
 
-    public Timestamp get_login_timestamp() {
+    Timestamp get_login_timestamp() {
         return loginTimestamp;
     }
 
-    public void assign_channel(Channel chn){
+    void assign_channel(Channel chn){
         this.currentChannel = chn;
     }
 
-    public Channel get_currentChannel(){
+    Channel get_currentChannel(){
         return currentChannel;
     }
 
-    public void set_new_login_timestamp(){
+    void set_new_login_timestamp(){
         this.loginTimestamp = new Timestamp(new java.util.Date().getTime());
     }
 

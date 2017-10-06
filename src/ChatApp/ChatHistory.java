@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+/**
+ * History of all messages, method for insert and printing
+ */
 public class ChatHistory implements ChatAnnouncer{
     private static ChatHistory ourInstance = new ChatHistory();
     private HashMap<Channel,HashSet<ChatObserver>> observersMap = new HashMap<>();
     private HashMap<Channel,LinkedList<ChatMessage>> chatHistoryMap = new HashMap<>();
 
-    public static ChatHistory get_instance() {
+    static ChatHistory get_instance() {
         return ourInstance;
     }
 
@@ -19,7 +22,7 @@ public class ChatHistory implements ChatAnnouncer{
         observersMap.put(defaultChannel,new HashSet<>());
     }
 
-    public void insert(ChatMessage message){
+    void insert(ChatMessage message){
         chatHistoryMap.get(message.get_channel()).addLast(message);
         announce(message);
     }
@@ -36,9 +39,9 @@ public class ChatHistory implements ChatAnnouncer{
     }
     */
 
-    public String print_history(User usr){
+    String print_history(User usr){
         StringBuilder str = new StringBuilder();
-        str.append("History of "+usr.get_currentChannel()+":"+System.getProperty("line.separator"));
+        str.append("History of ").append(usr.get_currentChannel().get_name()).append(":").append(System.getProperty("line.separator"));
         for(ChatMessage msg:chatHistoryMap.get(usr.get_currentChannel())){
             //if msg is after user logged in and its from current user channel
             if(msg.get_timestamp().after(usr.get_login_timestamp()) && msg.get_channel().equals(usr.get_currentChannel())) {
@@ -48,7 +51,7 @@ public class ChatHistory implements ChatAnnouncer{
         return str.toString();
     }
 
-    public void add_channel_to_history(Channel chn){
+    void add_channel_to_history(Channel chn){
         chatHistoryMap.put(chn,new LinkedList<>());
         observersMap.put(chn,new HashSet<>());
     }

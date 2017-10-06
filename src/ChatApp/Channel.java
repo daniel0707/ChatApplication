@@ -1,13 +1,16 @@
 package ChatApp;
 
+/**
+ * template for Channel objects
+ */
 public class Channel {
     private String channelName;
 
-    public Channel(String str){
+    Channel(String str){
         this.channelName=str;
     }
 
-    public String get_name(){
+    String get_name(){
         return this.channelName;
     }
 

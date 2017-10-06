@@ -3,6 +3,9 @@ package ChatApp;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+/**
+ * template for System communicates
+ */
 public class SystemMessage {
     private String msg;
     private Timestamp timestamp;

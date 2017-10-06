@@ -3,13 +3,16 @@ package ChatApp;
 import java.io.*;
 import java.util.Scanner;
 
+/**
+ * Runs commands depending on input
+ */
 public class CommandInterpreter implements ChatObserver,Runnable{
     private boolean quit = false;
     private Scanner scanner;
     private PrintStream writer;
     private User user = null;
 
-    public CommandInterpreter(InputStream in, OutputStream out){
+    CommandInterpreter(InputStream in, OutputStream out){
         this.scanner = new Scanner(in);
         this.writer = new PrintStream(out, true);
     }
@@ -62,10 +65,9 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                         user = new User(arg);
                         UserNameList.get_instance().insert_user_name(user);
                         writer.println(new SystemMessage("User " + arg + " has been registered").toString());
-                        //register to observe chat
                         ChatHistory.get_instance().register_observer(this,user.get_currentChannel());
                     } else {
-                        writer.println(new SystemMessage("User already exists").toString());
+                        writer.println(new SystemMessage("Username already exists").toString());
                     }
                 }else {
                     writer.println(new SystemMessage("Your username is "+user.get_username()).toString());
@@ -77,7 +79,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 if(arg.equals("all")) {
                     StringBuilder temp = new StringBuilder();
                     for (User usr : UserNameList.get_instance().print_users()) {
-                        temp.append(usr.get_username() + "\n");
+                        temp.append(usr.get_username()).append(" ");
                     }
                     writer.println(new SystemMessage(temp.toString()).toString());
                 }
@@ -85,16 +87,12 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                  //prints all users
                     StringBuilder temp = new StringBuilder();
                     for (User usr : UserNameList.get_instance().print_users(user.get_currentChannel())) {
-                        temp.append(usr.get_username()+"\n");
+                        temp.append(usr.get_username()).append(" ");
                         }
                         writer.println(new SystemMessage(temp.toString()).toString());
                 }
                 break;
             case "messages":
-                //print all messages in format given in toString method
-                //deprecated due to need for recognising who asks for history and giving exactly what he had access to
-                //writer.println(ChatHistory.get_instance().toString());
-
                 writer.println(new SystemMessage(ChatHistory.get_instance().print_history(user)));
                 break;
             case "channel":
@@ -105,6 +103,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 }else if(ChannelList.get_instance().check_contains(arg)){
                     user.assign_channel(ChannelList.get_instance().get_channel(arg));
                     user.set_new_login_timestamp();
+                    writer.println(new SystemMessage("Switched to "+arg));
                 }else{
                     writer.println(new SystemMessage("Channel "+arg+" doesn't exist, do you want to create it?").toString());
                     if(scanner.hasNext(":yes|:y")){
@@ -114,10 +113,15 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                         user.assign_channel(ChannelList.get_instance().get_channel(arg));
                         ChatHistory.get_instance().register_observer(this,user.get_currentChannel());
                         writer.println(new SystemMessage("Channel "+arg+" created").toString());
+                        writer.println(new SystemMessage("Switched to "+arg));
                     }
                 }
                 break;
+            case "channellist":
+                writer.println(new SystemMessage(ChannelList.get_instance().printChannelList()));
+                break;
             case "quit":
+                UserNameList.get_instance().getUserNameSet().remove(this.user);
                 quit = true;
                 scanner.close();
                 writer.close();
@@ -126,9 +130,9 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     }
 
     private void send_message(String str){
-        //if user==null, echo message
+        //if user==null, echo message through System
         if(user==null){
-            writer.println(str);
+            writer.println(new SystemMessage(str));
         }else {
             ChatMessage msg = new ChatMessage(str, user);
             ChatHistory.get_instance().insert(msg);
@@ -139,4 +143,5 @@ public class CommandInterpreter implements ChatObserver,Runnable{
     public void update(ChatMessage msg) {
         if(msg.get_channel().equals(user.get_currentChannel())){writer.println(msg.toString());}
     }
+
 }
