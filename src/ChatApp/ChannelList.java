@@ -40,10 +40,10 @@ class ChannelList {
         StringBuilder temp = new StringBuilder();
         temp.append("Available channels:");
         for (String chn: channelMap.keySet()) {
-            temp.append(" ").append(chn).append(" (").append(myMap.get(chn)).append("),\n");
+            temp.append(" ").append(chn).append(" (").append(myMap.get(chn)).append("), ");
         }
         String tmp = temp.toString();
-        tmp=tmp.substring(0,tmp.length()-1);
+        tmp=tmp.substring(0,tmp.length()-2);
         return tmp;
     }
 }

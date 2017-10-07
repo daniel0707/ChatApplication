@@ -101,7 +101,9 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 }else if(arg.isEmpty()) {
                     writer.println(new SystemMessage("Channel name cannot be empty").toString());
                 }else if(ChannelList.get_instance().check_contains(arg)){
+                    ChatHistory.get_instance().remove_observer(this,user.get_currentChannel());
                     user.assign_channel(ChannelList.get_instance().get_channel(arg));
+                    ChatHistory.get_instance().add_channel_to_history(ChannelList.get_instance().get_channel(arg));
                     user.set_new_login_timestamp();
                     writer.println(new SystemMessage("Switched to "+arg));
                 }else{
