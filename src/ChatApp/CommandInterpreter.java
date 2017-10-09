@@ -78,6 +78,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 if(arg!=null && !arg.isEmpty()){
                 if(arg.equals("all")) {
                     StringBuilder temp = new StringBuilder();
+                    temp.append("Whole userlist:");
                     for (User usr : UserNameList.get_instance().print_users()) {
                         temp.append(usr.get_username()).append(" ");
                     }
@@ -86,6 +87,7 @@ public class CommandInterpreter implements ChatObserver,Runnable{
                 }else {
                  //prints all users
                     StringBuilder temp = new StringBuilder();
+                    temp.append("Users in this channel are: ");
                     for (User usr : UserNameList.get_instance().print_users(user.get_currentChannel())) {
                         temp.append(usr.get_username()).append(" ");
                         }
